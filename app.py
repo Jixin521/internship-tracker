@@ -1,12 +1,51 @@
 import sqlite3
 
 
+def choose_status():
+    print("\nChoose a status:")
+    print("1. Applied")
+    print("2. Interview")
+    print("3. Offer")
+    print("4. Rejected")
+    print("5. Withdrawn")
+
+    choice = input("Enter choice: ")
+
+    if choice == "1":
+        return "Applied"
+    elif choice == "2":
+        return "Interview"
+    elif choice == "3":
+        return "Offer"
+    elif choice == "4":
+        return "Rejected"
+    elif choice == "5":
+        return "Withdrawn"
+    else:
+        print("Invalid status.")
+        return None
+
 def add_application():
-    company = input("Company: ")
-    position = input("Position: ")
-    location = input("Location: ")
-    status = input("Status: ")
-    date_applied = input("Date applied: ")
+    company = input("Company: ").strip()
+
+    if company == "":
+        print("Company cannot be empty.")
+        return
+
+    position = input("Position: ").strip()
+
+    if position == "":
+        print("Position cannot be empty.")
+        return
+
+    location = input("Location: ").strip()
+
+    status = choose_status()
+
+    if status is None:
+        return
+
+    date_applied = input("Date applied: ").strip()
 
     connection = sqlite3.connect("internships.db")
     cursor = connection.cursor()
@@ -56,7 +95,7 @@ def view_applications():
         print_application(application)
 
 
-    print_application(application)
+
 
 def main():
     while True:
@@ -107,6 +146,7 @@ def delete_application():
 
     cursor.execute("DELETE FROM applications WHERE id = ?", (application_id,))
     connection.commit()
+    connection.close()
 
     print("Application deleted!")
 
@@ -116,7 +156,10 @@ def update_status():
     view_applications()
 
     application_id = input("\nEnter the ID of the application to update: ")
-    new_status = input("Enter the new status: ")
+    new_status = choose_status()
+
+    if new_status is None:
+        return
 
     connection = sqlite3.connect("internships.db")
     cursor = connection.cursor()
